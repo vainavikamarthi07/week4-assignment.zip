@@ -1,0 +1,460 @@
+{
+  "info": {
+    "name": "Week 4 E-Commerce API",
+    "description": "Register or log in first; use an ADMIN_EMAIL account for admin product/order endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "todoId",
+      "value": ""
+    },
+    {
+      "key": "noteId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/health"
+      }
+    },
+    {
+      "name": "Register",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) pm.collectionVariables.set('token', pm.response.json().token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Demo Student\",\n  \"email\": \"student@example.com\",\n  \"password\": \"demo-password-123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/auth/register"
+      }
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) pm.collectionVariables.set('token', pm.response.json().token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"demo-password-123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "List tasks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/todos"
+      }
+    },
+    {
+      "name": "Add task",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) pm.collectionVariables.set('todoId', pm.response.json()._id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Practice REST APIs\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/todos"
+      }
+    },
+    {
+      "name": "Update task",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"completed\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/todos/{{todoId}}"
+      }
+    },
+    {
+      "name": "Delete task",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/todos/{{todoId}}"
+      }
+    },
+    {
+      "name": "List notes",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/notes"
+      }
+    },
+    {
+      "name": "Add note",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 201) pm.collectionVariables.set('noteId', pm.response.json()._id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Week 2 notes\",\n  \"body\": \"Review Express routes and JWT authentication.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/notes"
+      }
+    },
+    {
+      "name": "Update note",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"body\": \"Reviewed Express, MongoDB, and JWT authentication.\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/notes/{{noteId}}"
+      }
+    },
+    {
+      "name": "Delete note",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/notes/{{noteId}}"
+      }
+    },
+    {
+      "name": "Upload image",
+      "request": {
+        "url": "{{baseUrl}}/api/uploads",
+        "method": "POST",
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          }
+        ],
+        "body": {
+          "formdata": [
+            {
+              "type": "file",
+              "src": "",
+              "key": "image"
+            }
+          ],
+          "mode": "formdata"
+        }
+      }
+    },
+    {
+      "name": "List active tasks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          }
+        ],
+        "url": "{{baseUrl}}/api/todos?status=active"
+      }
+    },
+    {
+      "name": "List completed tasks",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          }
+        ],
+        "url": "{{baseUrl}}/api/todos?status=completed"
+      }
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const items=pm.response.json(); if(items.length) pm.collectionVariables.set('productId',items[0]._id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "name": "List products",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/products"
+      }
+    },
+    {
+      "name": "Create product (admin)",
+      "request": {
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          },
+          {
+            "value": "application/json",
+            "key": "Content-Type"
+          }
+        ],
+        "url": "{{baseUrl}}/api/products",
+        "method": "POST",
+        "body": {
+          "raw": "{ \"name\":\"Canvas Tote\", \"description\":\"A reusable everyday tote.\", \"price\":18, \"imageUrl\":\"\", \"stock\":12 }",
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if(pm.response.code===201) pm.collectionVariables.set('orderId',pm.response.json()._id);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "name": "Place order",
+      "request": {
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          },
+          {
+            "value": "application/json",
+            "key": "Content-Type"
+          }
+        ],
+        "url": "{{baseUrl}}/api/orders",
+        "method": "POST",
+        "body": {
+          "raw": "{ \"items\":[{\"productId\":\"{{productId}}\",\"quantity\":1}] }",
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "My orders",
+      "request": {
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          }
+        ],
+        "url": "{{baseUrl}}/api/orders/mine",
+        "method": "GET"
+      }
+    },
+    {
+      "name": "All orders (admin)",
+      "request": {
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          }
+        ],
+        "url": "{{baseUrl}}/api/orders",
+        "method": "GET"
+      }
+    },
+    {
+      "name": "Update order status (admin)",
+      "request": {
+        "header": [
+          {
+            "value": "Bearer {{token}}",
+            "key": "Authorization"
+          },
+          {
+            "value": "application/json",
+            "key": "Content-Type"
+          }
+        ],
+        "url": "{{baseUrl}}/api/orders/{{orderId}}/status",
+        "method": "PATCH",
+        "body": {
+          "raw": "{ \"status\":\"processing\" }",
+          "mode": "raw",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

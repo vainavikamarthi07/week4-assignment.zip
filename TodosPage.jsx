@@ -1,0 +1,13 @@
+import { useEffect, useMemo, useState } from 'react';
+import { api } from '../api.js';
+
+export default function TodosPage({ user, onSignOut }) {
+  const [todos, setTodos] = useState([]); const [title, setTitle] = useState(''); const [filter, setFilter] = useState('all'); const [message, setMessage] = useState('Loading your tasks…');
+  async function refresh() { try { setTodos(await api('/api/todos')); setMessage(''); } catch (error) { setMessage(error.message); } }
+  useEffect(() => { refresh(); }, []);
+  async function addTodo(event) { event.preventDefault(); try { await api('/api/todos', { method: 'POST', body: JSON.stringify({ title }) }); setTitle(''); await refresh(); } catch (error) { setMessage(error.message); } }
+  async function toggle(todo) { try { await api(`/api/todos/${todo._id}`, { method: 'PATCH', body: JSON.stringify({ completed: !todo.completed }) }); await refresh(); } catch (error) { setMessage(error.message); } }
+  async function remove(id) { try { await api(`/api/todos/${id}`, { method: 'DELETE' }); await refresh(); } catch (error) { setMessage(error.message); } }
+  const filtered = useMemo(() => todos.filter(todo => filter === 'all' || (filter === 'active' ? !todo.completed : todo.completed)), [todos, filter]);
+  return <section className="panel"><div className="panel-heading"><div><p className="eyebrow">PRIVATE TASK LIST</p><h1>Hello, {user?.name || 'there'}.</h1></div><button className="text-button" onClick={onSignOut}>Sign out</button></div><form className="add-row" onSubmit={addTodo}><label className="visually-hidden" htmlFor="todo-title">New task</label><input id="todo-title" value={title} onChange={event => setTitle(event.target.value)} placeholder="What needs doing?" required maxLength="160"/><button className="primary">Add task</button></form><div className="filter-row" aria-label="Filter tasks">{['all','active','completed'].map(item => <button key={item} type="button" aria-pressed={filter === item} className={`filter-button ${filter === item ? 'selected' : ''}`} onClick={() => setFilter(item)}>{item[0].toUpperCase()+item.slice(1)}</button>)}<span>{filtered.length} shown</span></div><p role="status" className="status">{message}</p><ul className="todo-list">{filtered.map(todo => <li key={todo._id} className={todo.completed ? 'done' : ''}><label><input type="checkbox" checked={todo.completed} onChange={() => toggle(todo)}/><span>{todo.title}</span></label><button className="delete" onClick={() => remove(todo._id)} aria-label={`Delete ${todo.title}`}>Delete</button></li>)}</ul>{!filtered.length && !message && <p className="empty">No tasks in this view yet.</p>}</section>;
+}
